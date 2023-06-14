@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/luccastrin/clean-node-api/issues"
   },
-  "homepage": "https://github.com/luccastrin/clean-node-api#readme"
+  "homepage": "https://github.com/luccastrin/clean-node-api#readme",
+  "devDependencies": {
+    "typescript": "^5.1.3"
+  }
 }
