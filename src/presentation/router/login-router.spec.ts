@@ -1,4 +1,5 @@
-import { LoginRouter, MissingParamError } from './login-router';
+import { MissingParamError } from '../helpers/missing-param-errors';
+import { LoginRouter } from './login-router';
 
 describe('Login Router', () => {
   it('should return 400 if no email is provided', () => {
