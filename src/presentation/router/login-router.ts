@@ -15,17 +15,15 @@ export class LoginRouter {
   route(httpRequest?: HttpRequest): any {
     const { email, password } = httpRequest?.body || {};
     if (!httpRequest || !httpRequest.body) {
-      return HttpResponse.ServerError();
+      return HttpResponse.serverError();
     }
     if (!email) {
-      return HttpResponse.BadRequest('email');
+      return HttpResponse.badRequest('email');
     }
     if (!password) {
-      return HttpResponse.BadRequest('password');
+      return HttpResponse.badRequest('password');
     }
     this.authUseCase.auth(email, password);
-    return {
-      statusCode: 401,
-    };
+    return HttpResponse.unAuthorizedError();
   }
 }

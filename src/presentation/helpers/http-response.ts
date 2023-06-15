@@ -1,16 +1,24 @@
-import { MissingParamError } from './missing-param-errors';
+import { UnAuthorizedError } from './anauthorized-error';
+import { MissingParamError } from './missing-param-error';
 
 export class HttpResponse {
-  static BadRequest(paramName: string) {
+  static badRequest(paramName: string) {
     return {
       statusCode: 400,
       body: new MissingParamError(paramName),
     };
   }
 
-  static ServerError() {
+  static serverError() {
     return {
       statusCode: 500,
+    };
+  }
+
+  static unAuthorizedError() {
+    return {
+      statusCode: 401,
+      body: new UnAuthorizedError(),
     };
   }
 }
