@@ -6,13 +6,19 @@ type HttpRequest = {
 };
 
 type HttpResponse = {
-  status: number;
+  status?: number;
 };
 
 export class LoginRouter {
   route(httpRequest: HttpRequest): any {
-    const { email } = httpRequest.body;
+    const { email, password } = httpRequest.body;
     if (!email) {
+      return {
+        status: 400,
+      };
+    }
+
+    if (!password) {
       return {
         status: 400,
       };
