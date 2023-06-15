@@ -10,6 +10,8 @@ type HttpBody = {
 };
 
 export class LoginRouter {
+  constructor(private authUseCase: any) {}
+
   route(httpRequest?: HttpRequest): any {
     const { email, password } = httpRequest?.body || {};
     if (!httpRequest || !httpRequest.body) {
@@ -21,5 +23,6 @@ export class LoginRouter {
     if (!password) {
       return HttpResponse.BadRequest('password');
     }
+    this.authUseCase.auth(email, password);
   }
 }

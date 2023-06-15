@@ -2,12 +2,27 @@ import { MissingParamError } from '../helpers/missing-param-errors';
 import { LoginRouter } from './login-router';
 
 const makeSut = () => {
-  return new LoginRouter();
+  class AuthUseCaseSpy {
+    email!: string;
+    password!: string;
+
+    auth(email: string, password: string) {
+      this.email = email;
+      this.password = password;
+    }
+  }
+
+  const authUseCaseSpy = new AuthUseCaseSpy();
+  const sut = new LoginRouter(authUseCaseSpy);
+  return {
+    sut,
+    authUseCaseSpy,
+  };
 };
 
 describe('Login Router', () => {
   it('should return 400 if no email is provided', () => {
-    const sut = makeSut();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
         password: 'any_password',
@@ -19,10 +34,10 @@ describe('Login Router', () => {
   });
 
   it('should return 400 if no password is provided', () => {
-    const sut = makeSut();
+    const { sut } = makeSut();
     const httpRequest = {
       body: {
-        email: 'any_email',
+        email: 'any_email@mail.com',
       },
     };
     const httpResponse = sut.route(httpRequest);
@@ -31,14 +46,27 @@ describe('Login Router', () => {
   });
 
   it('should return 500 if no httRequest is provided', () => {
-    const sut = makeSut();
+    const { sut } = makeSut();
     const httpResponse = sut.route();
     expect(httpResponse.statusCode).toBe(500);
   });
 
   it('should return 500 if httpRequest has no body is provided', () => {
-    const sut = makeSut();
+    const { sut } = makeSut();
     const httpResponse = sut.route({});
     expect(httpResponse.statusCode).toBe(500);
+  });
+
+  it('should call AuthUseCase with correct params', () => {
+    const { sut, authUseCaseSpy } = makeSut();
+    const httpRequest = {
+      body: {
+        email: 'any_email@mail.com',
+        password: 'any_password',
+      },
+    };
+    sut.route(httpRequest);
+    expect(authUseCaseSpy.email).toBe(httpRequest.body.email);
+    expect(authUseCaseSpy.password).toBe(httpRequest.body.password);
   });
 });
