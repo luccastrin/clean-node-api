@@ -28,7 +28,13 @@ export class LoginRouter {
     if (!password) {
       return HttpResponse.badRequest('password');
     }
-    this.authUseCase.auth(email, password);
-    return HttpResponse.unAuthorizedError();
+
+    const acessToken = this.authUseCase.auth(email, password);
+
+    if (!acessToken) {
+      return HttpResponse.unAuthorizedError();
+    }
+
+    return HttpResponse.ok();
   }
 }
