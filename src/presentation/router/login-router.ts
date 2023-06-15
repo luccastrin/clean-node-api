@@ -7,22 +7,39 @@ type HttpBody = {
   email?: string;
 };
 
-type HttpResponse = {
-  statusCode?: number;
-};
+class HttpResponse {
+  static BadRequest(paramName: string) {
+    return {
+      statusCode: 400,
+      body: new MissingParamError(paramName),
+    };
+  }
+
+  static ServerError() {
+    return {
+      statusCode: 500,
+    };
+  }
+}
+
+export class MissingParamError extends Error {
+  constructor(paramName: string) {
+    super(`missing param: ${paramName}`);
+    this.name = 'MissingParamError';
+  }
+}
 
 export class LoginRouter {
   route(httpRequest?: HttpRequest): any {
     const { email, password } = httpRequest?.body || {};
     if (!httpRequest || !httpRequest.body) {
-      return {
-        statusCode: 500,
-      };
+      return HttpResponse.ServerError();
     }
-    if (!email || !password) {
-      return {
-        statusCode: 400,
-      };
+    if (!email) {
+      return HttpResponse.BadRequest('email');
+    }
+    if (!password) {
+      return HttpResponse.BadRequest('password');
     }
   }
 }
