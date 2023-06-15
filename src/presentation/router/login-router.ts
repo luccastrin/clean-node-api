@@ -24,5 +24,8 @@ export class LoginRouter {
       return HttpResponse.BadRequest('password');
     }
     this.authUseCase.auth(email, password);
+    return {
+      statusCode: 401,
+    };
   }
 }
