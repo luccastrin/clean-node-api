@@ -9,7 +9,7 @@ describe('Login Router', () => {
       },
     };
     const httpResponse = sut.route(httpRequest);
-    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.statusCode).toBe(400);
   });
 
   test('should return 400 if no password is provided', () => {
@@ -20,6 +20,18 @@ describe('Login Router', () => {
       },
     };
     const httpResponse = sut.route(httpRequest);
-    expect(httpResponse.status).toBe(400);
+    expect(httpResponse.statusCode).toBe(400);
+  });
+
+  test('should return 500 if no httRequest is provided', () => {
+    const sut = new LoginRouter();
+    const httpResponse = sut.route();
+    expect(httpResponse.statusCode).toBe(500);
+  });
+
+  test('should return 500 if httpRequest has no body is provided', () => {
+    const sut = new LoginRouter();
+    const httpResponse = sut.route({});
+    expect(httpResponse.statusCode).toBe(500);
   });
 });

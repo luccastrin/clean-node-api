@@ -1,26 +1,27 @@
 type HttpRequest = {
-  body: {
-    password?: string;
-    email?: string;
-  };
+  body?: HttpBody;
+};
+
+type HttpBody = {
+  password?: string;
+  email?: string;
 };
 
 type HttpResponse = {
-  status?: number;
+  statusCode?: number;
 };
 
 export class LoginRouter {
-  route(httpRequest: HttpRequest): any {
-    const { email, password } = httpRequest.body;
-    if (!email) {
+  route(httpRequest?: HttpRequest): any {
+    const { email, password } = httpRequest?.body || {};
+    if (!httpRequest || !httpRequest.body) {
       return {
-        status: 400,
+        statusCode: 500,
       };
     }
-
-    if (!password) {
+    if (!email || !password) {
       return {
-        status: 400,
+        statusCode: 400,
       };
     }
   }
