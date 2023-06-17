@@ -22,9 +22,10 @@ export class HttpResponse {
     };
   }
 
-  static ok() {
+  static ok(data: any) {
     return {
       statusCode: 200,
+      body: data,
     };
   }
 }

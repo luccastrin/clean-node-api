@@ -22,6 +22,7 @@ export class LoginRouter {
     ) {
       return HttpResponse.serverError();
     }
+
     if (!email) {
       return HttpResponse.badRequest('email');
     }
@@ -29,12 +30,11 @@ export class LoginRouter {
       return HttpResponse.badRequest('password');
     }
 
-    const acessToken = this.authUseCase.auth(email, password);
-
+    let acessToken = this.authUseCase.auth(email, password);
     if (!acessToken) {
       return HttpResponse.unAuthorizedError();
     }
 
-    return HttpResponse.ok();
+    return HttpResponse.ok({ acessToken });
   }
 }
