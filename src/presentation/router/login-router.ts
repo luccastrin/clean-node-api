@@ -12,7 +12,7 @@ type HttpBody = {
 export class LoginRouter {
   constructor(private authUseCase: any) {}
 
-  route(httpRequest?: any): any {
+  async route(httpRequest?: any): Promise<any> {
     try {
       const { email, password } = httpRequest.body;
       if (!email) {
@@ -22,7 +22,7 @@ export class LoginRouter {
         return HttpResponse.badRequest('password');
       }
 
-      const acessToken = this.authUseCase.auth(email, password);
+      const acessToken = await this.authUseCase.auth(email, password);
       if (!acessToken) {
         return HttpResponse.unAuthorizedError();
       }
