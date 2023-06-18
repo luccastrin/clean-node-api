@@ -1,4 +1,4 @@
-import { UnAuthorizedError } from './anauthorized-error';
+import { UnAuthorizedError } from './unauthorized-error';
 import { MissingParamError } from './missing-param-error';
 import { ServerError } from './server-error';
 
