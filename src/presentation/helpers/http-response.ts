@@ -3,10 +3,10 @@ import { MissingParamError } from './missing-param-error';
 import { ServerError } from './server-error';
 
 export class HttpResponse {
-  static badRequest(paramName: string) {
+  static badRequest(error: any) {
     return {
       statusCode: 400,
-      body: new MissingParamError(paramName),
+      body: error,
     };
   }
 
