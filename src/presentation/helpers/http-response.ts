@@ -1,5 +1,4 @@
-import { ServerError } from '../errors/server-error';
-import { UnAuthorizedError } from '../errors/unauthorized-error';
+import { ServerError, UnAuthorizedError } from '../errors';
 
 export class HttpResponse {
   static badRequest(error: any) {
