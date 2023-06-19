@@ -1,6 +1,6 @@
 import { HttpResponse } from '../helpers/http-response';
-import { InvalidParamError } from '../helpers/invalid-param-error';
-import { MissingParamError } from '../helpers/missing-param-error';
+import { InvalidParamError } from '../errors/invalid-param-error';
+import { MissingParamError } from '../errors/missing-param-error';
 
 type HttpRequest = {
   body: HttpBody;

@@ -1,8 +1,8 @@
-import { UnAuthorizedError } from '../helpers/unauthorized-error';
-import { MissingParamError } from '../helpers/missing-param-error';
-import { ServerError } from '../helpers/server-error';
+import { UnAuthorizedError } from '../errors/unauthorized-error';
+import { MissingParamError } from '../errors/missing-param-error';
+import { ServerError } from '../errors/server-error';
 import { LoginRouter } from './login-router';
-import { InvalidParamError } from '../helpers/invalid-param-error';
+import { InvalidParamError } from '../errors/invalid-param-error';
 
 const makeSut = () => {
   const authUseCaseSpy = makeAuthUseCase();
