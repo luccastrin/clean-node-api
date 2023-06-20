@@ -2,6 +2,7 @@ import { InvalidParamError, MissingParamError } from '../../utils/errors';
 
 interface Auth {
   loadUserByEmailRepository?: any;
+  updateAccessTokenRepository?: any;
   encrypter?: any;
   tokenGenerator?: any;
 }
@@ -24,6 +25,10 @@ export class AuthUseCase {
     if (isValid) {
       const accessToken = await this.authParams?.tokenGenerator.generate(
         user.id
+      );
+      await this.authParams?.updateAccessTokenRepository.update(
+        user.id,
+        accessToken
       );
       return accessToken;
     }

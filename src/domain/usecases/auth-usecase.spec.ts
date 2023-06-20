@@ -68,6 +68,19 @@ const makeLoadUserEmailRepository = () => {
   return loadUserByEmailRepositorySpy;
 };
 
+const makeUpdateAccessTokenRepository = () => {
+  class UpdateAccessTokenRepositorySpy {
+    userId!: string;
+    accessToken!: string;
+
+    async update(userId: string, accessToken: string) {
+      this.userId = userId;
+      this.accessToken = accessToken;
+    }
+  }
+  return new UpdateAccessTokenRepositorySpy();
+};
+
 const makeLoadUserEmailRepositoryWithError = () => {
   class LoadUserByEmailRepositorySpy {
     async load() {
@@ -81,10 +94,12 @@ const makeSut = () => {
   const encrypterSpy = makeEncrypter();
   const loadUserByEmailRepositorySpy = makeLoadUserEmailRepository();
   const tokenGeneratorSpy = makeTokenGenerator();
+  const updateAccessTokenRepositorySpy = makeUpdateAccessTokenRepository();
   const sut = new AuthUseCase({
     loadUserByEmailRepository: loadUserByEmailRepositorySpy,
     encrypter: encrypterSpy,
     tokenGenerator: tokenGeneratorSpy,
+    updateAccessTokenRepository: updateAccessTokenRepositorySpy,
   });
 
   return {
@@ -92,6 +107,7 @@ const makeSut = () => {
     loadUserByEmailRepositorySpy,
     encrypterSpy,
     tokenGeneratorSpy,
+    updateAccessTokenRepositorySpy,
   };
 };
 
@@ -163,6 +179,22 @@ describe('Auth UseCase', () => {
     const sut = new AuthUseCase({});
     const promise = sut.auth('any_email@mail.com', 'any_password');
     expect(promise).rejects.toThrow();
+  });
+
+  it('should call UpdateAccessTokenRepository with correct values', async () => {
+    const {
+      sut,
+      loadUserByEmailRepositorySpy,
+      updateAccessTokenRepositorySpy,
+      tokenGeneratorSpy,
+    } = makeSut();
+    await sut.auth('valid_email@mail.com', 'valid_password');
+    expect(updateAccessTokenRepositorySpy.userId).toBe(
+      loadUserByEmailRepositorySpy.user.id
+    );
+    expect(updateAccessTokenRepositorySpy.accessToken).toBe(
+      tokenGeneratorSpy.accessToken
+    );
   });
 
   it('should throw if LoadUserByEmailRepository has no load method', async () => {
