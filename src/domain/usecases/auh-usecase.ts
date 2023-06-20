@@ -1,11 +1,13 @@
 import { InvalidParamError, MissingParamError } from '../../utils/errors';
 
+interface Auth {
+  loadUserByEmailRepository?: any;
+  encrypter?: any;
+  tokenGenerator?: any;
+}
+
 export class AuthUseCase {
-  constructor(
-    private loadUserByEmailRepository?: any,
-    private encrypter?: any,
-    private tokenGenerator?: any
-  ) {}
+  constructor(private authParams?: Auth) {}
 
   async auth(email?: string, password?: string) {
     if (!email) {
@@ -15,11 +17,14 @@ export class AuthUseCase {
       throw new MissingParamError('password');
     }
 
-    const user = await this.loadUserByEmailRepository.load(email);
+    const user = await this.authParams?.loadUserByEmailRepository.load(email);
     const isValid =
-      user && (await this.encrypter.compare(password, user.password));
+      user &&
+      (await this.authParams?.encrypter.compare(password, user.password));
     if (isValid) {
-      const accessToken = await this.tokenGenerator.generate(user.id);
+      const accessToken = await this.authParams?.tokenGenerator.generate(
+        user.id
+      );
       return accessToken;
     }
     return null;
