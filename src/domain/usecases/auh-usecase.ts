@@ -3,7 +3,8 @@ import { InvalidParamError, MissingParamError } from '../../utils/errors';
 export class AuthUseCase {
   constructor(
     private loadUserByEmailRepository?: any,
-    private encrypter?: any
+    private encrypter?: any,
+    private tokenGenerator?: any
   ) {}
   async auth(email?: string, password?: string) {
     if (!email) {
@@ -20,5 +21,6 @@ export class AuthUseCase {
     if (!isValid) {
       return null;
     }
+    await this.tokenGenerator.generate(user.id);
   }
 }
