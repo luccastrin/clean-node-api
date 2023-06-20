@@ -68,6 +68,15 @@ const makeLoadUserEmailRepository = () => {
   return loadUserByEmailRepositorySpy;
 };
 
+const makeLoadUserEmailRepositoryWithError = () => {
+  class LoadUserByEmailRepositorySpy {
+    async load() {
+      throw new Error();
+    }
+  }
+  return new LoadUserByEmailRepositorySpy();
+};
+
 const makeUpdateAccessTokenRepository = () => {
   class UpdateAccessTokenRepositorySpy {
     userId!: string;
@@ -81,13 +90,13 @@ const makeUpdateAccessTokenRepository = () => {
   return new UpdateAccessTokenRepositorySpy();
 };
 
-const makeLoadUserEmailRepositoryWithError = () => {
-  class LoadUserByEmailRepositorySpy {
-    async load() {
+const makeUpdateAccessTokenRepositoryWithError = () => {
+  class UpdateAccessTokenRepositorySpy {
+    async update() {
       throw new Error();
     }
   }
-  return new LoadUserByEmailRepositorySpy();
+  return new UpdateAccessTokenRepositorySpy();
 };
 
 const makeSut = () => {
@@ -197,6 +206,12 @@ describe('Auth UseCase', () => {
     );
   });
 
+  it('should throw if LoadUserByEmailRepository is null', async () => {
+    const sut = new AuthUseCase({ loadUserByEmailRepository: null });
+    const promise = sut.auth('any_email@mail.com', 'any_password');
+    expect(promise).rejects.toThrow();
+  });
+
   it('should throw if LoadUserByEmailRepository has no load method', async () => {
     const invalid = {};
     const sut = new AuthUseCase({ loadUserByEmailRepository: invalid });
@@ -244,6 +259,29 @@ describe('Auth UseCase', () => {
     expect(promise).rejects.toThrow();
   });
 
+  it('should throw if updateAccessTokenRepository is null', async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserEmailRepository(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+      updateAccessTokenRepository: null,
+    });
+    const promise = sut.auth('any_email@mail.com', 'any_password');
+    expect(promise).rejects.toThrow();
+  });
+
+  it('should throw if tokenGenerator is invalid', async () => {
+    const invalid = {};
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserEmailRepository(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+      updateAccessTokenRepository: invalid,
+    });
+    const promise = sut.auth('any_email@mail.com', 'any_password');
+    expect(promise).rejects.toThrow();
+  });
+
   it('should throw if loadUserByEmailRepository throws', async () => {
     const sut = new AuthUseCase({
       loadUserByEmailRepository: makeLoadUserEmailRepositoryWithError(),
@@ -266,6 +304,17 @@ describe('Auth UseCase', () => {
       loadUserByEmailRepository: makeLoadUserEmailRepositoryWithError(),
       encrypter: makeEncrypter(),
       tokenGenerator: makeTokenGeneratorWithError(),
+    });
+    const promise = sut.auth('any_email@mail.com', 'any_password');
+    expect(promise).rejects.toThrow();
+  });
+
+  it('should throw if updateAccessTokenRepository throws', async () => {
+    const sut = new AuthUseCase({
+      loadUserByEmailRepository: makeLoadUserEmailRepositoryWithError(),
+      encrypter: makeEncrypter(),
+      tokenGenerator: makeTokenGenerator(),
+      updateAccessTokenRepository: makeUpdateAccessTokenRepositoryWithError(),
     });
     const promise = sut.auth('any_email@mail.com', 'any_password');
     expect(promise).rejects.toThrow();
