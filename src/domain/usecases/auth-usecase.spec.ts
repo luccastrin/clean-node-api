@@ -1,17 +1,24 @@
 import { MissingParamError } from '../../utils/errors';
 import { AuthUseCase } from './auh-usecase';
 
-const makeSut = () => {
+const makeEncrypter = () => {
   class EncrypterSpy {
     password!: string;
     hashedPassword!: string;
+    isValid!: boolean;
 
     async compare(password: string, hashedPassword: string) {
       this.password = password;
       this.hashedPassword = hashedPassword;
+      return this.isValid;
     }
   }
   const encrypterSpy = new EncrypterSpy();
+  encrypterSpy.isValid = true;
+  return encrypterSpy;
+};
+
+const makeLoadUserEmailRepository = () => {
   class LoadUserByEmailRepositorySpy {
     email!: string;
     user!: any;
@@ -24,6 +31,12 @@ const makeSut = () => {
   loadUserByEmailRepositorySpy.user = {
     password: 'hashed_password',
   };
+  return loadUserByEmailRepositorySpy;
+};
+
+const makeSut = () => {
+  const encrypterSpy = makeEncrypter();
+  const loadUserByEmailRepositorySpy = makeLoadUserEmailRepository();
   const sut = new AuthUseCase(loadUserByEmailRepositorySpy, encrypterSpy);
 
   return {
@@ -75,7 +88,8 @@ describe('Auth UseCase', () => {
   });
 
   it('should return null if an invalid password is provided', async () => {
-    const { sut } = makeSut();
+    const { sut, encrypterSpy } = makeSut();
+    encrypterSpy.isValid = false;
     const accessToken = await sut.auth(
       'valid_email@mail.com',
       'invalid_password'
